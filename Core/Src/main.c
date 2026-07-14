@@ -43,8 +43,6 @@
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
-DAC_HandleTypeDef hdac1;
-
 TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN PV */
@@ -56,7 +54,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
-static void MX_DAC1_Init(void);
 static void MX_TIM6_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -98,17 +95,12 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
-  MX_DAC1_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
   // 1. Prepare the ADC DMA buffer first so it's waiting for the trigger
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)audio_buffer, 1024);
 
-  // 2. Start the DAC so it's ready to output when the trigger arrives
-  HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 
-  // 3. Start the timer LAST. This unleashes the TRGO pulses to both simultaneously
-  HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 0);
   HAL_TIM_Base_Start(&htim6);
   /* USER CODE END 2 */
 
@@ -203,8 +195,8 @@ static void MX_ADC1_Init(void)
   hadc1.Init.NbrOfConversion = 1;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIG_T6_TRGO;
-  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISINGFALLING;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
   hadc1.Init.OversamplingMode = DISABLE;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
@@ -231,56 +223,6 @@ static void MX_ADC1_Init(void)
 }
 
 /**
-  * @brief DAC1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_DAC1_Init(void)
-{
-
-  /* USER CODE BEGIN DAC1_Init 0 */
-
-  /* USER CODE END DAC1_Init 0 */
-
-  DAC_ChannelConfTypeDef sConfig = {0};
-
-  /* USER CODE BEGIN DAC1_Init 1 */
-
-  /* USER CODE END DAC1_Init 1 */
-
-  /** DAC Initialization
-  */
-  hdac1.Instance = DAC1;
-  if (HAL_DAC_Init(&hdac1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** DAC channel OUT1 config
-  */
-  sConfig.DAC_SampleAndHold = DAC_SAMPLEANDHOLD_DISABLE;
-  sConfig.DAC_Trigger = DAC_TRIGGER_T6_TRGO;
-  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
-  sConfig.DAC_ConnectOnChipPeripheral = DAC_CHIPCONNECT_DISABLE;
-  sConfig.DAC_UserTrimming = DAC_TRIMMING_FACTORY;
-  if (HAL_DAC_ConfigChannel(&hdac1, &sConfig, DAC_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure Triangle wave generation on DAC OUT1
-  */
-  if (HAL_DACEx_TriangleWaveGenerate(&hdac1, DAC_CHANNEL_1, DAC_TRIANGLEAMPLITUDE_511) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN DAC1_Init 2 */
-
-  /* USER CODE END DAC1_Init 2 */
-
-}
-
-/**
   * @brief TIM6 Initialization Function
   * @param None
   * @retval None
@@ -301,7 +243,7 @@ static void MX_TIM6_Init(void)
   htim6.Init.Prescaler = 0;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim6.Init.Period = 4999;
-  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
     Error_Handler();
