@@ -66,8 +66,8 @@ uint8_t ram_disk[BLOCK_SIZE * BLOCK_COUNT];
   */
 
 #define STORAGE_LUN_NBR                  1
-#define STORAGE_BLK_NBR                  32
-#define STORAGE_BLK_SIZ                  512
+#define STORAGE_BLK_NBR                  0x10000
+#define STORAGE_BLK_SIZ                  0x200
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
 
