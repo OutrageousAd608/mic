@@ -10,9 +10,16 @@
 
 extern SPI_HandleTypeDef hspi1;
 
-#define W25Q_CMD_JEDEC_ID     0x9F
-#define W25Q_CMD_READ_STATUS1 0x05
-#define W25Q_CMD_WRITE_ENABLE 0x06
+
+#define W25Q_CMD_JEDEC_ID     		 0x9F
+#define W25Q_CMD_WRITE_ENABLE        0x06
+#define W25Q_CMD_READ_STATUS1        0x05
+#define W25Q_CMD_SECTOR_ERASE        0x20
+#define W25Q_CMD_PAGE_PROGRAM        0x02
+#define W25Q_CMD_READ_DATA           0x03
+
+#define W25Q128_SR1_BUSY    (1U << 0)
+#define W25Q128_SR1_WEL     (1U << 1)
 
 static void CS_Low(void)
 {
@@ -112,8 +119,107 @@ void W25Q128_WriteEnable(void)
 
 void W25Q128_WaitBusy(void)
 {
-    while (W25Q128_ReadStatus1() & 0x01)
+	while (W25Q128_ReadStatus1() & W25Q128_SR1_BUSY)
+	{
+	}
+}
+
+void W25Q128_SectorErase(uint32_t address)
+{
+    uint8_t tx[4];
+
+    // Make sure previous operation is finished
+    W25Q128_WaitBusy();
+
+    // Enable write
+    W25Q128_WriteEnable();
+
+    tx[0] = W25Q_CMD_SECTOR_ERASE;
+    tx[1] = (address >> 16) & 0xFF;
+    tx[2] = (address >> 8) & 0xFF;
+    tx[3] = address & 0xFF;
+
+    CS_Low();
+
+    HAL_SPI_Transmit(&hspi1,
+                     tx,
+                     4,
+                     HAL_MAX_DELAY);
+
+    CS_High();
+
+    // Wait until erase finishes
+    W25Q128_WaitBusy();
+}
+
+void W25Q128_PageProgram(uint32_t address, uint8_t *data, uint16_t length)
+{
+    uint8_t tx[260];
+
+    if(length > 256)
     {
-        // wait
+        length = 256;
     }
+
+    // Wait for previous operation
+    W25Q128_WaitBusy();
+
+    // Enable write
+    W25Q128_WriteEnable();
+
+
+    tx[0] = W25Q_CMD_PAGE_PROGRAM;
+    tx[1] = (address >> 16) & 0xFF;
+    tx[2] = (address >> 8) & 0xFF;
+    tx[3] = address & 0xFF;
+
+
+    for(uint16_t i = 0; i < length; i++)
+    {
+        tx[4+i] = data[i];
+    }
+
+
+    CS_Low();
+
+    HAL_SPI_Transmit(&hspi1,
+                     tx,
+                     length + 4,
+                     HAL_MAX_DELAY);
+
+    CS_High();
+
+
+    // Wait until write completes
+    W25Q128_WaitBusy();
+}
+
+void W25Q128_ReadData(uint32_t address, uint8_t *data, uint32_t length)
+{
+    uint8_t tx[4];
+
+    tx[0] = W25Q_CMD_READ_DATA;
+    tx[1] = (address >> 16) & 0xFF;
+    tx[2] = (address >> 8) & 0xFF;
+    tx[3] = address & 0xFF;
+
+
+    CS_Low();
+
+
+    // Send command + address
+    HAL_SPI_Transmit(&hspi1,
+                     tx,
+                     4,
+                     HAL_MAX_DELAY);
+
+
+    // Receive data bytes
+    HAL_SPI_Receive(&hspi1,
+                    data,
+                    length,
+                    HAL_MAX_DELAY);
+
+
+    CS_High();
 }

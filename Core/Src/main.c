@@ -44,8 +44,15 @@
 SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
-uint8_t before;
-uint8_t after;
+uint8_t write_data[] =
+{
+    0x11,
+    0x22,
+    0x33,
+    0x44
+};
+
+uint8_t read_data[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -90,8 +97,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
   MX_USB_DEVICE_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -100,10 +107,27 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // 1. Erase sector
+	  W25Q128_SectorErase(0x000000);
 
 
-	  before = W25Q128_ReadStatus1();
+	  // 2. Program data
+	  W25Q128_PageProgram(0x000000,
+	                      write_data,
+	                      4);
 
+
+	  // 3. Read back
+	  W25Q128_ReadData(0x000000,
+	                   read_data,
+	                   4);
+
+
+	  W25Q128_SectorErase(0x000000);
+
+	  W25Q128_ReadData(0x000000,
+	                   read_data,
+	                   4);
 
     /* USER CODE END WHILE */
 
@@ -186,7 +210,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

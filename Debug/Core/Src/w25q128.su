@@ -1,7 +1,10 @@
-../Core/Src/w25q128.c:17:13:CS_Low	8	static
-../Core/Src/w25q128.c:24:13:CS_High	8	static
-../Core/Src/w25q128.c:31:6:W25Q128_Init	16	static
-../Core/Src/w25q128.c:52:6:W25Q128_ReadJEDEC	40	static
-../Core/Src/w25q128.c:78:9:W25Q128_ReadStatus1	24	static
-../Core/Src/w25q128.c:99:6:W25Q128_WriteEnable	16	static
-../Core/Src/w25q128.c:113:6:W25Q128_WaitBusy	8	static
+../Core/Src/w25q128.c:24:13:CS_Low	8	static
+../Core/Src/w25q128.c:31:13:CS_High	8	static
+../Core/Src/w25q128.c:38:6:W25Q128_Init	16	static
+../Core/Src/w25q128.c:59:6:W25Q128_ReadJEDEC	40	static
+../Core/Src/w25q128.c:85:9:W25Q128_ReadStatus1	24	static
+../Core/Src/w25q128.c:106:6:W25Q128_WriteEnable	16	static
+../Core/Src/w25q128.c:120:6:W25Q128_WaitBusy	8	static
+../Core/Src/w25q128.c:127:6:W25Q128_SectorErase	24	static
+../Core/Src/w25q128.c:155:6:W25Q128_PageProgram	288	static
+../Core/Src/w25q128.c:197:6:W25Q128_ReadData	32	static
