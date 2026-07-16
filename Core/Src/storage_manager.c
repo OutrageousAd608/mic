@@ -87,7 +87,7 @@ void StorageManager_Task(void)
     }
 
 
-    if(samples_written >= 80000)
+    if(!ButtonPressed() && samples_written > 16000)
     {
         StorageManager_StopRecording();
     }
