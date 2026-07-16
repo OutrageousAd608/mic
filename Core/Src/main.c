@@ -22,7 +22,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "flash_disk.h"
 #include "w25q128.h"
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,15 +46,7 @@
 SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
-uint8_t write_data[] =
-{
-    0x11,
-    0x22,
-    0x33,
-    0x44
-};
 
-uint8_t read_data[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -107,27 +101,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  // 1. Erase sector
-	  W25Q128_SectorErase(0x000000);
 
-
-	  // 2. Program data
-	  W25Q128_PageProgram(0x000000,
-	                      write_data,
-	                      4);
-
-
-	  // 3. Read back
-	  W25Q128_ReadData(0x000000,
-	                   read_data,
-	                   4);
-
-
-	  W25Q128_SectorErase(0x000000);
-
-	  W25Q128_ReadData(0x000000,
-	                   read_data,
-	                   4);
 
     /* USER CODE END WHILE */
 

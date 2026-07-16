@@ -1,0 +1,6 @@
+../Core/Src/flash_disk.c:19:6:FlashDisk_Init	8	static
+../Core/Src/flash_disk.c:26:6:FlashDisk_Read	24	static
+../Core/Src/flash_disk.c:55:6:FlashDisk_Write	32	static
+../Core/Src/flash_disk.c:89:10:FlashDisk_GetBlockCount	4	static
+../Core/Src/flash_disk.c:96:10:FlashDisk_GetBlockSize	4	static
+../Core/Src/flash_disk.c:101:13:FlashDisk_UpdateEraseSector	32	static

@@ -22,7 +22,7 @@
 #include "usbd_storage_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include "flash_disk.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,10 +31,7 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-#define BLOCK_SIZE 512
-#define BLOCK_COUNT 64
 
-uint8_t ram_disk[BLOCK_SIZE * BLOCK_COUNT];
 /* USER CODE END PV */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -66,8 +63,8 @@ uint8_t ram_disk[BLOCK_SIZE * BLOCK_COUNT];
   */
 
 #define STORAGE_LUN_NBR                  1
-#define STORAGE_BLK_NBR                  0x10000
-#define STORAGE_BLK_SIZ                  0x200
+#define STORAGE_BLK_NBR                  FLASH_DISK_BLOCK_COUNT
+#define STORAGE_BLK_SIZ                  FLASH_DISK_BLOCK_SIZE
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
 
@@ -180,8 +177,12 @@ USBD_StorageTypeDef USBD_Storage_Interface_fops_FS =
 int8_t STORAGE_Init_FS(uint8_t lun)
 {
   /* USER CODE BEGIN 2 */
-	memset(ram_disk, 0xFF, sizeof(ram_disk));
-  return (USBD_OK);
+	if(FlashDisk_Init())
+	    {
+	        return 0;
+	    }
+
+	    return -1;
   /* USER CODE END 2 */
 }
 
@@ -195,9 +196,12 @@ int8_t STORAGE_Init_FS(uint8_t lun)
 int8_t STORAGE_GetCapacity_FS(uint8_t lun, uint32_t *block_num, uint16_t *block_size)
 {
   /* USER CODE BEGIN 3 */
-  *block_num  = BLOCK_COUNT;
-  *block_size = BLOCK_SIZE;
-  return (USBD_OK);
+	*block_num = FlashDisk_GetBlockCount();
+
+	    *block_size = FlashDisk_GetBlockSize();
+
+
+	    return 0;
   /* USER CODE END 3 */
 }
 
@@ -233,10 +237,17 @@ int8_t STORAGE_IsWriteProtected_FS(uint8_t lun)
 int8_t STORAGE_Read_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t blk_len)
 {
   /* USER CODE BEGIN 6 */
-	memcpy(buf,
-		   &ram_disk[blk_addr * BLOCK_SIZE],
-		   blk_len * BLOCK_SIZE);
-  return (USBD_OK);
+	for(uint32_t i = 0; i < blk_len; i++)
+	    {
+	        if(!FlashDisk_Read(blk_addr + i,
+	                           buf + (i * FLASH_DISK_BLOCK_SIZE)))
+	        {
+	            return -1;
+	        }
+	    }
+
+
+	    return 0;
   /* USER CODE END 6 */
 }
 
@@ -248,10 +259,17 @@ int8_t STORAGE_Read_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t bl
 int8_t STORAGE_Write_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t blk_len)
 {
   /* USER CODE BEGIN 7 */
-	memcpy(&ram_disk[blk_addr * BLOCK_SIZE],
-	       buf,
-	       blk_len * BLOCK_SIZE);
-  return (USBD_OK);
+	for(uint32_t i = 0; i < blk_len; i++)
+	    {
+	        if(!FlashDisk_Write(blk_addr+i,
+	                            buf + ((i * FLASH_DISK_BLOCK_SIZE))))
+	        {
+	            return -1;
+	        }
+	    }
+
+
+	    return 0;
   /* USER CODE END 7 */
 }
 

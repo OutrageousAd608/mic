@@ -7,6 +7,7 @@
 
 
 #include "w25q128.h"
+#include <stddef.h>
 
 extern SPI_HandleTypeDef hspi1;
 
@@ -14,12 +15,19 @@ extern SPI_HandleTypeDef hspi1;
 #define W25Q_CMD_JEDEC_ID     		 0x9F
 #define W25Q_CMD_WRITE_ENABLE        0x06
 #define W25Q_CMD_READ_STATUS1        0x05
-#define W25Q_CMD_SECTOR_ERASE        0x20
+#define W25Q_CMD_BLOCK_ERASE_4K      0x20
+#define W25Q_CMD_BLOCK_ERASE_32K     0x52
+#define W25Q_CMD_BLOCK_ERASE_64K     0xD8
+#define W25Q_CMD_CHIP_ERASE          0xC7
 #define W25Q_CMD_PAGE_PROGRAM        0x02
 #define W25Q_CMD_READ_DATA           0x03
 
 #define W25Q128_SR1_BUSY    (1U << 0)
 #define W25Q128_SR1_WEL     (1U << 1)
+
+#define W25Q128_FLASH_SIZE      0x1000000
+#define W25Q128_SECTOR_SIZE     4096
+#define W25Q128_PAGE_SIZE       256
 
 static void CS_Low(void)
 {
@@ -119,12 +127,16 @@ void W25Q128_WriteEnable(void)
 
 void W25Q128_WaitBusy(void)
 {
-	while (W25Q128_ReadStatus1() & W25Q128_SR1_BUSY)
+	uint32_t timeout = HAL_GetTick();
+
+	while(W25Q128_ReadStatus1() & W25Q128_SR1_BUSY)
 	{
+	    if(HAL_GetTick() - timeout > 60000)
+	        return;
 	}
 }
 
-void W25Q128_SectorErase(uint32_t address)
+void W25Q128_EraseSector4K(uint32_t address)
 {
     uint8_t tx[4];
 
@@ -134,7 +146,7 @@ void W25Q128_SectorErase(uint32_t address)
     // Enable write
     W25Q128_WriteEnable();
 
-    tx[0] = W25Q_CMD_SECTOR_ERASE;
+    tx[0] = W25Q_CMD_BLOCK_ERASE_4K;
     tx[1] = (address >> 16) & 0xFF;
     tx[2] = (address >> 8) & 0xFF;
     tx[3] = address & 0xFF;
@@ -152,8 +164,80 @@ void W25Q128_SectorErase(uint32_t address)
     W25Q128_WaitBusy();
 }
 
+void W25Q128_EraseBlock32K(uint32_t address)
+{
+    uint8_t tx[4];
+
+    W25Q128_WaitBusy();
+    W25Q128_WriteEnable();
+
+    tx[0] = W25Q_CMD_BLOCK_ERASE_32K;
+    tx[1] = (address >> 16) & 0xFF;
+    tx[2] = (address >> 8) & 0xFF;
+    tx[3] = address & 0xFF;
+
+    CS_Low();
+
+    HAL_SPI_Transmit(&hspi1,
+                     tx,
+                     4,
+                     HAL_MAX_DELAY);
+
+    CS_High();
+
+    W25Q128_WaitBusy();
+}
+
+void W25Q128_EraseBlock64K(uint32_t address)
+{
+    uint8_t tx[4];
+
+    W25Q128_WaitBusy();
+    W25Q128_WriteEnable();
+
+    tx[0] = W25Q_CMD_BLOCK_ERASE_64K;
+    tx[1] = (address >> 16) & 0xFF;
+    tx[2] = (address >> 8) & 0xFF;
+    tx[3] = address & 0xFF;
+
+    CS_Low();
+
+    HAL_SPI_Transmit(&hspi1,
+                     tx,
+                     4,
+                     HAL_MAX_DELAY);
+
+    CS_High();
+
+    W25Q128_WaitBusy();
+}
+
+void W25Q128_ChipErase(void)
+{
+    uint8_t cmd = W25Q_CMD_CHIP_ERASE;
+
+    W25Q128_WaitBusy();
+    W25Q128_WriteEnable();
+
+    CS_Low();
+
+    HAL_SPI_Transmit(&hspi1,
+                     &cmd,
+                     1,
+                     HAL_MAX_DELAY);
+
+    CS_High();
+
+    W25Q128_WaitBusy();
+}
+
 void W25Q128_PageProgram(uint32_t address, uint8_t *data, uint16_t length)
 {
+	if(data == NULL)
+	{
+	    return;
+	}
+
     uint8_t tx[260];
 
     if(length > 256)
@@ -194,9 +278,19 @@ void W25Q128_PageProgram(uint32_t address, uint8_t *data, uint16_t length)
     W25Q128_WaitBusy();
 }
 
-void W25Q128_ReadData(uint32_t address, uint8_t *data, uint32_t length)
+void W25Q128_ReadData(uint32_t address,
+                      uint8_t *data,
+                      uint32_t length)
 {
     uint8_t tx[4];
+
+
+    if(data == NULL)
+    {
+        return;
+    }
+
+    W25Q128_WaitBusy();
 
     tx[0] = W25Q_CMD_READ_DATA;
     tx[1] = (address >> 16) & 0xFF;
@@ -204,22 +298,74 @@ void W25Q128_ReadData(uint32_t address, uint8_t *data, uint32_t length)
     tx[3] = address & 0xFF;
 
 
+
     CS_Low();
 
-
-    // Send command + address
     HAL_SPI_Transmit(&hspi1,
                      tx,
                      4,
                      HAL_MAX_DELAY);
 
-
-    // Receive data bytes
     HAL_SPI_Receive(&hspi1,
                     data,
                     length,
                     HAL_MAX_DELAY);
 
 
+
     CS_High();
+}
+
+void W25Q128_Write(uint32_t address,
+                   uint8_t *data,
+                   uint32_t length)
+{
+	if(length == 0)
+	{
+	    return;
+	}
+
+    uint32_t bytes_remaining = length;
+
+
+    if(data == NULL)
+    {
+        return;
+    }
+
+
+    /*
+     * Write data page by page
+     */
+    while(bytes_remaining > 0)
+    {
+
+        uint32_t page_offset =
+                address % W25Q128_PAGE_SIZE;
+
+
+        uint32_t bytes_to_write =
+                W25Q128_PAGE_SIZE - page_offset;
+
+
+
+        if(bytes_remaining < bytes_to_write)
+        {
+            bytes_to_write = bytes_remaining;
+        }
+
+
+
+        W25Q128_PageProgram(address,
+                            data,
+                            bytes_to_write);
+
+
+
+        address += bytes_to_write;
+
+        data += bytes_to_write;
+
+        bytes_remaining -= bytes_to_write;
+    }
 }
