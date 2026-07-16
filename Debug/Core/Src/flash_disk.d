@@ -19,6 +19,9 @@ Core/Src/flash_disk.o: ../Core/Src/flash_disk.c ../Core/Inc/flash_disk.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_dma.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_cortex.h \
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc.h \
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_adc.h \
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc_ex.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_exti.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash_ex.h \
@@ -29,7 +32,9 @@ Core/Src/flash_disk.o: ../Core/Src/flash_disk.c ../Core/Inc/flash_disk.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr_ex.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h \
- ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi_ex.h
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi_ex.h \
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim.h \
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h
 ../Core/Inc/flash_disk.h:
 ../Core/Inc/w25q128.h:
 ../Core/Inc/main.h:
@@ -52,6 +57,9 @@ Core/Src/flash_disk.o: ../Core/Src/flash_disk.c ../Core/Inc/flash_disk.h \
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_dma.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_cortex.h:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc.h:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_adc.h:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc_ex.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_exti.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash_ex.h:
@@ -63,3 +71,5 @@ Core/Src/flash_disk.o: ../Core/Src/flash_disk.c ../Core/Inc/flash_disk.h \
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr_ex.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi_ex.h:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim.h:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h:

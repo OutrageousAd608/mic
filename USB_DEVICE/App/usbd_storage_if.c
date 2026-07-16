@@ -23,6 +23,7 @@
 
 /* USER CODE BEGIN INCLUDE */
 #include "flash_disk.h"
+#include "storage_manager.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,8 +64,8 @@
   */
 
 #define STORAGE_LUN_NBR                  1
-#define STORAGE_BLK_NBR                  FLASH_DISK_BLOCK_COUNT
-#define STORAGE_BLK_SIZ                  FLASH_DISK_BLOCK_SIZE
+#define STORAGE_BLK_NBR                  0x10000
+#define STORAGE_BLK_SIZ                  0x200
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
 
@@ -178,11 +179,11 @@ int8_t STORAGE_Init_FS(uint8_t lun)
 {
   /* USER CODE BEGIN 2 */
 	if(FlashDisk_Init())
-	    {
-	        return 0;
-	    }
+    {
+        return 0;
+    }
 
-	    return -1;
+    return -1;
   /* USER CODE END 2 */
 }
 
