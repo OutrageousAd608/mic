@@ -21,15 +21,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   8 .data         00000170  20000000  08010684  00012000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          00002ba8  20000170  080107f4  00012170  2**2
+  9 .bss          00004fa8  20000170  080107f4  00012170  2**2
                   ALLOC
- 10 ._user_heap_stack 00000600  20002d18  080107f4  00012d18  2**0
+ 10 ._user_heap_stack 00000600  20005118  080107f4  00013118  2**0
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  00012170  2**0
                   CONTENTS, READONLY
- 12 .debug_info   000208dd  00000000  00000000  000121a0  2**0
+ 12 .debug_info   000208e1  00000000  00000000  000121a0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 0000545e  00000000  00000000  00032a7d  2**0
+ 13 .debug_abbrev 0000545c  00000000  00000000  00032a81  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_aranges 00001cc8  00000000  00000000  00037ee0  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -710,8 +710,8 @@ static void MX_ADC1_Init(void)
   sConfig.Rank = ADC_REGULAR_RANK_1;
  8000522:	2306      	movs	r3, #6
  8000524:	607b      	str	r3, [r7, #4]
-  sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
- 8000526:	2300      	movs	r3, #0
+  sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;
+ 8000526:	2304      	movs	r3, #4
  8000528:	60bb      	str	r3, [r7, #8]
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
  800052a:	237f      	movs	r3, #127	@ 0x7f
@@ -1082,7 +1082,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
  800071a:	f85d 7b04 	ldr.w	r7, [sp], #4
  800071e:	4770      	bx	lr
  8000720:	50040000 	.word	0x50040000
- 8000724:	20001ae8 	.word	0x20001ae8
+ 8000724:	200032e8 	.word	0x200032e8
 
 08000728 <HAL_ADC_ConvCpltCallback>:
 
@@ -1112,7 +1112,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  8000746:	f85d 7b04 	ldr.w	r7, [sp], #4
  800074a:	4770      	bx	lr
  800074c:	50040000 	.word	0x50040000
- 8000750:	20001ae9 	.word	0x20001ae9
+ 8000750:	200032e9 	.word	0x200032e9
 
 08000754 <Error_Handler>:
 /**
@@ -1727,7 +1727,7 @@ void USB_IRQHandler(void)
  8000a12:	bf00      	nop
  8000a14:	bd80      	pop	{r7, pc}
  8000a16:	bf00      	nop
- 8000a18:	20002668 	.word	0x20002668
+ 8000a18:	20004a68 	.word	0x20004a68
 
 08000a1c <ButtonPressed>:
 
@@ -1769,7 +1769,7 @@ void StorageManager_Init(void)
  8000a48:	46bd      	mov	sp, r7
  8000a4a:	f85d 7b04 	ldr.w	r7, [sp], #4
  8000a4e:	4770      	bx	lr
- 8000a50:	20001aea 	.word	0x20001aea
+ 8000a50:	200032ea 	.word	0x200032ea
 
 08000a54 <StorageManager_Task>:
 
@@ -1823,15 +1823,15 @@ void StorageManager_Task(void)
  8000a88:	2200      	movs	r2, #0
  8000a8a:	701a      	strb	r2, [r3, #0]
 
-        WAV_WriteSamples(&audio_buffer[0],512);
- 8000a8c:	f44f 7100 	mov.w	r1, #512	@ 0x200
+        WAV_WriteSamples(&audio_buffer[0],2048);
+ 8000a8c:	f44f 6100 	mov.w	r1, #2048	@ 0x800
  8000a90:	481a      	ldr	r0, [pc, #104]	@ (8000afc <StorageManager_Task+0xa8>)
  8000a92:	f000 faff 	bl	8001094 <WAV_WriteSamples>
 
-        samples_written += 512;
+        samples_written += 2048;
  8000a96:	4b1a      	ldr	r3, [pc, #104]	@ (8000b00 <StorageManager_Task+0xac>)
  8000a98:	681b      	ldr	r3, [r3, #0]
- 8000a9a:	f503 7300 	add.w	r3, r3, #512	@ 0x200
+ 8000a9a:	f503 6300 	add.w	r3, r3, #2048	@ 0x800
  8000a9e:	4a18      	ldr	r2, [pc, #96]	@ (8000b00 <StorageManager_Task+0xac>)
  8000aa0:	6013      	str	r3, [r2, #0]
     }
@@ -1849,15 +1849,15 @@ void StorageManager_Task(void)
  8000aae:	2200      	movs	r2, #0
  8000ab0:	701a      	strb	r2, [r3, #0]
 
-        WAV_WriteSamples(&audio_buffer[512],512);
- 8000ab2:	f44f 7100 	mov.w	r1, #512	@ 0x200
+        WAV_WriteSamples(&audio_buffer[2048],2048);
+ 8000ab2:	f44f 6100 	mov.w	r1, #2048	@ 0x800
  8000ab6:	4814      	ldr	r0, [pc, #80]	@ (8000b08 <StorageManager_Task+0xb4>)
  8000ab8:	f000 faec 	bl	8001094 <WAV_WriteSamples>
 
-        samples_written += 512;
+        samples_written += 2048;
  8000abc:	4b10      	ldr	r3, [pc, #64]	@ (8000b00 <StorageManager_Task+0xac>)
  8000abe:	681b      	ldr	r3, [r3, #0]
- 8000ac0:	f503 7300 	add.w	r3, r3, #512	@ 0x200
+ 8000ac0:	f503 6300 	add.w	r3, r3, #2048	@ 0x800
  8000ac4:	4a0e      	ldr	r2, [pc, #56]	@ (8000b00 <StorageManager_Task+0xac>)
  8000ac6:	6013      	str	r3, [r2, #0]
     }
@@ -1895,12 +1895,12 @@ void StorageManager_Task(void)
  8000aee:	bf00      	nop
  8000af0:	bd80      	pop	{r7, pc}
  8000af2:	bf00      	nop
- 8000af4:	20001aea 	.word	0x20001aea
- 8000af8:	20001ae8 	.word	0x20001ae8
+ 8000af4:	200032ea 	.word	0x200032ea
+ 8000af8:	200032e8 	.word	0x200032e8
  8000afc:	200012e8 	.word	0x200012e8
- 8000b00:	20001aec 	.word	0x20001aec
- 8000b04:	20001ae9 	.word	0x20001ae9
- 8000b08:	200016e8 	.word	0x200016e8
+ 8000b00:	200032ec 	.word	0x200032ec
+ 8000b04:	200032e9 	.word	0x200032e9
+ 8000b08:	200022e8 	.word	0x200022e8
 
 08000b0c <StorageManager_StartRecording>:
 }
@@ -1947,12 +1947,12 @@ void StorageManager_StartRecording(void)
  8000b36:	f006 f9e7 	bl	8006f08 <HAL_TIM_Base_Start>
 
         HAL_ADC_Start_DMA(&hadc1,
- 8000b3a:	f44f 6280 	mov.w	r2, #1024	@ 0x400
+ 8000b3a:	f44f 5280 	mov.w	r2, #4096	@ 0x1000
  8000b3e:	490a      	ldr	r1, [pc, #40]	@ (8000b68 <StorageManager_StartRecording+0x5c>)
  8000b40:	480a      	ldr	r0, [pc, #40]	@ (8000b6c <StorageManager_StartRecording+0x60>)
  8000b42:	f000 ff4f 	bl	80019e4 <HAL_ADC_Start_DMA>
                           (uint32_t*)audio_buffer,
-                          1024);
+                          4096);
 
 
         current_state = STORAGE_RECORDING;
@@ -1967,10 +1967,10 @@ void StorageManager_StartRecording(void)
 }
  8000b50:	bd80      	pop	{r7, pc}
  8000b52:	bf00      	nop
- 8000b54:	20001aea 	.word	0x20001aea
- 8000b58:	20001aec 	.word	0x20001aec
- 8000b5c:	20001ae8 	.word	0x20001ae8
- 8000b60:	20001ae9 	.word	0x20001ae9
+ 8000b54:	200032ea 	.word	0x200032ea
+ 8000b58:	200032ec 	.word	0x200032ec
+ 8000b5c:	200032e8 	.word	0x200032e8
+ 8000b60:	200032e9 	.word	0x200032e9
  8000b64:	2000129c 	.word	0x2000129c
  8000b68:	200012e8 	.word	0x200012e8
  8000b6c:	2000118c 	.word	0x2000118c
@@ -2008,7 +2008,7 @@ void StorageManager_StopRecording(void)
  8000b8e:	bf00      	nop
  8000b90:	2000118c 	.word	0x2000118c
  8000b94:	2000129c 	.word	0x2000129c
- 8000b98:	20001aea 	.word	0x20001aea
+ 8000b98:	200032ea 	.word	0x200032ea
 
 08000b9c <_sbrk>:
  *
@@ -2088,8 +2088,8 @@ void *_sbrk(ptrdiff_t incr)
  8000bf6:	bd80      	pop	{r7, pc}
  8000bf8:	2000c000 	.word	0x2000c000
  8000bfc:	00000400 	.word	0x00000400
- 8000c00:	20001af0 	.word	0x20001af0
- 8000c04:	20002d18 	.word	0x20002d18
+ 8000c00:	200032f0 	.word	0x200032f0
+ 8000c04:	20005118 	.word	0x20005118
 
 08000c08 <SystemInit>:
   * @brief  Setup the microcontroller system.
@@ -2945,12 +2945,12 @@ bool WAV_Create(char *filename)
  8001076:	3740      	adds	r7, #64	@ 0x40
  8001078:	46bd      	mov	sp, r7
  800107a:	bd80      	pop	{r7, pc}
- 800107c:	20001af4 	.word	0x20001af4
+ 800107c:	200032f4 	.word	0x200032f4
  8001080:	46464952 	.word	0x46464952
  8001084:	45564157 	.word	0x45564157
  8001088:	20746d66 	.word	0x20746d66
  800108c:	61746164 	.word	0x61746164
- 8001090:	20001d24 	.word	0x20001d24
+ 8001090:	20003524 	.word	0x20003524
 
 08001094 <WAV_WriteSamples>:
 
@@ -2964,7 +2964,7 @@ bool WAV_WriteSamples(uint16_t *samples,
  8001098:	af00      	add	r7, sp, #0
  800109a:	6078      	str	r0, [r7, #4]
  800109c:	6039      	str	r1, [r7, #0]
-    static int16_t converted[512];
+    static int16_t converted[2048];
 
 
     for(uint32_t i=0;i<count;i++)
@@ -3036,9 +3036,9 @@ bool WAV_WriteSamples(uint16_t *samples,
  80010fa:	46bd      	mov	sp, r7
  80010fc:	bd80      	pop	{r7, pc}
  80010fe:	bf00      	nop
- 8001100:	20001d28 	.word	0x20001d28
- 8001104:	20001af4 	.word	0x20001af4
- 8001108:	20001d24 	.word	0x20001d24
+ 8001100:	20003528 	.word	0x20003528
+ 8001104:	200032f4 	.word	0x200032f4
+ 8001108:	20003524 	.word	0x20003524
 
 0800110c <WAV_Close>:
 
@@ -3162,11 +3162,11 @@ bool WAV_Close(void)
  8001184:	46bd      	mov	sp, r7
  8001186:	bd80      	pop	{r7, pc}
  8001188:	46464952 	.word	0x46464952
- 800118c:	20001d24 	.word	0x20001d24
+ 800118c:	20003524 	.word	0x20003524
  8001190:	45564157 	.word	0x45564157
  8001194:	20746d66 	.word	0x20746d66
  8001198:	61746164 	.word	0x61746164
- 800119c:	20001af4 	.word	0x20001af4
+ 800119c:	200032f4 	.word	0x200032f4
 
 080011a0 <WAV_CreateNew>:
 
@@ -3319,7 +3319,7 @@ LoopForever:
   ldr r2, =_sbss
  8001240:	20000170 	.word	0x20000170
   ldr r4, =_ebss
- 8001244:	20002d18 	.word	0x20002d18
+ 8001244:	20005118 	.word	0x20005118
 
 08001248 <ADC1_IRQHandler>:
  * @retval : None
@@ -3498,7 +3498,7 @@ __weak void HAL_IncTick(void)
  8001310:	4770      	bx	lr
  8001312:	bf00      	nop
  8001314:	20000008 	.word	0x20000008
- 8001318:	20002128 	.word	0x20002128
+ 8001318:	20004528 	.word	0x20004528
 
 0800131c <HAL_GetTick>:
   * @note This function is declared as __weak to be overwritten in case of other
@@ -3518,7 +3518,7 @@ __weak uint32_t HAL_GetTick(void)
  8001328:	f85d 7b04 	ldr.w	r7, [sp], #4
  800132c:	4770      	bx	lr
  800132e:	bf00      	nop
- 8001330:	20002128 	.word	0x20002128
+ 8001330:	20004528 	.word	0x20004528
 
 08001334 <LL_ADC_SetCommonClock>:
   *         @arg @ref LL_ADC_CLOCK_ASYNC_DIV128
@@ -23291,9 +23291,9 @@ void MX_FATFS_Init(void)
 }
  8008f7c:	bf00      	nop
  8008f7e:	bd80      	pop	{r7, pc}
- 8008f80:	20002130 	.word	0x20002130
+ 8008f80:	20004530 	.word	0x20004530
  8008f84:	2000000c 	.word	0x2000000c
- 8008f88:	2000212c 	.word	0x2000212c
+ 8008f88:	2000452c 	.word	0x2000452c
 
 08008f8c <get_fattime>:
   * @brief  Gets Time from RTC
@@ -28550,7 +28550,7 @@ static int8_t SCSI_ReportLuns(USBD_HandleTypeDef *pdev, uint8_t lun, uint8_t *pa
  800aeee:	3720      	adds	r7, #32
  800aef0:	46bd      	mov	sp, r7
  800aef2:	bd80      	pop	{r7, pc}
- 800aef4:	2000213c 	.word	0x2000213c
+ 800aef4:	2000453c 	.word	0x2000453c
 
 0800aef8 <SCSI_ReceiveDiagnosticResults>:
   * @param  lun: Logical unit number
@@ -28629,7 +28629,7 @@ static int8_t SCSI_ReceiveDiagnosticResults(USBD_HandleTypeDef *pdev, uint8_t lu
  800af56:	46bd      	mov	sp, r7
  800af58:	bd80      	pop	{r7, pc}
  800af5a:	bf00      	nop
- 800af5c:	20002134 	.word	0x20002134
+ 800af5c:	20004534 	.word	0x20004534
 
 0800af60 <SCSI_CheckAddressRange>:
   * @param  blk_nbr: number of block to be processed
@@ -32314,7 +32314,7 @@ static USBD_StatusTypeDef USBD_SetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReq
  800c3b6:	46bd      	mov	sp, r7
  800c3b8:	bd80      	pop	{r7, pc}
  800c3ba:	bf00      	nop
- 800c3bc:	20002154 	.word	0x20002154
+ 800c3bc:	20004554 	.word	0x20004554
 
 0800c3c0 <USBD_GetConfig>:
   * @param  pdev: device instance
@@ -33070,7 +33070,7 @@ DSTATUS disk_status (
  800c78e:	3710      	adds	r7, #16
  800c790:	46bd      	mov	sp, r7
  800c792:	bd80      	pop	{r7, pc}
- 800c794:	20002180 	.word	0x20002180
+ 800c794:	20004580 	.word	0x20004580
 
 0800c798 <disk_initialize>:
   * @retval DSTATUS: Operation status
@@ -33124,7 +33124,7 @@ DSTATUS disk_initialize (
  800c7da:	46bd      	mov	sp, r7
  800c7dc:	bd80      	pop	{r7, pc}
  800c7de:	bf00      	nop
- 800c7e0:	20002180 	.word	0x20002180
+ 800c7e0:	20004580 	.word	0x20004580
 
 0800c7e4 <disk_read>:
 	BYTE pdrv,		/* Physical drive nmuber to identify the drive */
@@ -33168,7 +33168,7 @@ DSTATUS disk_initialize (
  800c81a:	46bd      	mov	sp, r7
  800c81c:	bd90      	pop	{r4, r7, pc}
  800c81e:	bf00      	nop
- 800c820:	20002180 	.word	0x20002180
+ 800c820:	20004580 	.word	0x20004580
 
 0800c824 <disk_write>:
 	BYTE pdrv,		/* Physical drive nmuber to identify the drive */
@@ -33212,7 +33212,7 @@ DSTATUS disk_initialize (
  800c85a:	46bd      	mov	sp, r7
  800c85c:	bd90      	pop	{r4, r7, pc}
  800c85e:	bf00      	nop
- 800c860:	20002180 	.word	0x20002180
+ 800c860:	20004580 	.word	0x20004580
 
 0800c864 <disk_ioctl>:
 DRESULT disk_ioctl (
@@ -33254,7 +33254,7 @@ DRESULT disk_ioctl (
  800c896:	3710      	adds	r7, #16
  800c898:	46bd      	mov	sp, r7
  800c89a:	bd80      	pop	{r7, pc}
- 800c89c:	20002180 	.word	0x20002180
+ 800c89c:	20004580 	.word	0x20004580
 
 0800c8a0 <ld_word>:
 /* Load/Store multi-byte word in the FAT structure                       */
@@ -33726,7 +33726,7 @@ FRESULT chk_lock (	/* Check if the file can be accessed */
  800cb50:	f85d 7b04 	ldr.w	r7, [sp], #4
  800cb54:	4770      	bx	lr
  800cb56:	bf00      	nop
- 800cb58:	20002160 	.word	0x20002160
+ 800cb58:	20004560 	.word	0x20004560
 
 0800cb5c <enq_lock>:
 
@@ -33770,7 +33770,7 @@ int enq_lock (void)	/* Check if an entry is available for a new object */
  800cb94:	f85d 7b04 	ldr.w	r7, [sp], #4
  800cb98:	4770      	bx	lr
  800cb9a:	bf00      	nop
- 800cb9c:	20002160 	.word	0x20002160
+ 800cb9c:	20004560 	.word	0x20004560
 
 0800cba0 <inc_lock>:
 static
@@ -33945,7 +33945,7 @@ UINT inc_lock (	/* Increment object open counter and returns its index (0:Intern
  800ccb0:	46bd      	mov	sp, r7
  800ccb2:	f85d 7b04 	ldr.w	r7, [sp], #4
  800ccb6:	4770      	bx	lr
- 800ccb8:	20002160 	.word	0x20002160
+ 800ccb8:	20004560 	.word	0x20004560
 
 0800ccbc <dec_lock>:
 
@@ -34026,7 +34026,7 @@ FRESULT dec_lock (	/* Decrement object open counter */
  800cd28:	f85d 7b04 	ldr.w	r7, [sp], #4
  800cd2c:	4770      	bx	lr
  800cd2e:	bf00      	nop
- 800cd30:	20002160 	.word	0x20002160
+ 800cd30:	20004560 	.word	0x20004560
 
 0800cd34 <clear_lock>:
 
@@ -34075,7 +34075,7 @@ void clear_lock (	/* Clear lock entries of the volume */
  800cd70:	46bd      	mov	sp, r7
  800cd72:	f85d 7b04 	ldr.w	r7, [sp], #4
  800cd76:	4770      	bx	lr
- 800cd78:	20002160 	.word	0x20002160
+ 800cd78:	20004560 	.word	0x20004560
 
 0800cd7c <sync_window>:
 #if !_FS_READONLY
@@ -37184,7 +37184,7 @@ FRESULT find_volume (	/* FR_OK(0): successful, !=0: any error occurred */
  800e03e:	230d      	movs	r3, #13
  800e040:	e0eb      	b.n	800e21a <find_volume+0x482>
  800e042:	bf00      	nop
- 800e044:	20002158 	.word	0x20002158
+ 800e044:	20004558 	.word	0x20004558
 		nclst = (tsect - sysect) / fs->csize;			/* Number of clusters */
  800e048:	6cba      	ldr	r2, [r7, #72]	@ 0x48
  800e04a:	6abb      	ldr	r3, [r7, #40]	@ 0x28
@@ -37457,7 +37457,7 @@ FRESULT find_volume (	/* FR_OK(0): successful, !=0: any error occurred */
  800e222:	bf00      	nop
  800e224:	41615252 	.word	0x41615252
  800e228:	61417272 	.word	0x61417272
- 800e22c:	2000215c 	.word	0x2000215c
+ 800e22c:	2000455c 	.word	0x2000455c
 
 0800e230 <validate>:
 static
@@ -37637,7 +37637,7 @@ FRESULT f_mount (
  800e31e:	3720      	adds	r7, #32
  800e320:	46bd      	mov	sp, r7
  800e322:	bd80      	pop	{r7, pc}
- 800e324:	20002158 	.word	0x20002158
+ 800e324:	20004558 	.word	0x20004558
 
 0800e328 <f_open>:
 FRESULT f_open (
@@ -39634,7 +39634,7 @@ uint8_t FATFS_LinkDriverEx(const Diskio_drvTypeDef *drv, char *path, uint8_t lun
  800efe8:	f85d 7b04 	ldr.w	r7, [sp], #4
  800efec:	4770      	bx	lr
  800efee:	bf00      	nop
- 800eff0:	20002180 	.word	0x20002180
+ 800eff0:	20004580 	.word	0x20004580
 
 0800eff4 <FATFS_LinkDriver>:
   * @param  drv: pointer to the disk IO Driver structure
@@ -39726,7 +39726,7 @@ void MX_USB_DEVICE_Init(void)
  800f060:	bf00      	nop
  800f062:	bd80      	pop	{r7, pc}
  800f064:	200000a0 	.word	0x200000a0
- 800f068:	2000218c 	.word	0x2000218c
+ 800f068:	2000458c 	.word	0x2000458c
  800f06c:	20000020 	.word	0x20000020
  800f070:	20000100 	.word	0x20000100
 
@@ -39827,7 +39827,7 @@ uint8_t * USBD_FS_ProductStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length
  800f0ea:	46bd      	mov	sp, r7
  800f0ec:	bd80      	pop	{r7, pc}
  800f0ee:	bf00      	nop
- 800f0f0:	20002468 	.word	0x20002468
+ 800f0f0:	20004868 	.word	0x20004868
  800f0f4:	08010524 	.word	0x08010524
 
 0800f0f8 <USBD_FS_ManufacturerStrDescriptor>:
@@ -39856,7 +39856,7 @@ uint8_t * USBD_FS_ManufacturerStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *l
  800f112:	3708      	adds	r7, #8
  800f114:	46bd      	mov	sp, r7
  800f116:	bd80      	pop	{r7, pc}
- 800f118:	20002468 	.word	0x20002468
+ 800f118:	20004868 	.word	0x20004868
  800f11c:	08010538 	.word	0x08010538
 
 0800f120 <USBD_FS_SerialStrDescriptor>:
@@ -39935,7 +39935,7 @@ uint8_t * USBD_FS_ConfigStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
  800f172:	46bd      	mov	sp, r7
  800f174:	bd80      	pop	{r7, pc}
  800f176:	bf00      	nop
- 800f178:	20002468 	.word	0x20002468
+ 800f178:	20004868 	.word	0x20004868
  800f17c:	08010540 	.word	0x08010540
 
 0800f180 <USBD_FS_InterfaceStrDescriptor>:
@@ -39979,7 +39979,7 @@ uint8_t * USBD_FS_InterfaceStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *leng
  800f1ae:	46bd      	mov	sp, r7
  800f1b0:	bd80      	pop	{r7, pc}
  800f1b2:	bf00      	nop
- 800f1b4:	20002468 	.word	0x20002468
+ 800f1b4:	20004868 	.word	0x20004868
  800f1b8:	0801054c 	.word	0x0801054c
 
 0800f1bc <USBD_FS_USR_BOSDescriptor>:
@@ -40861,7 +40861,7 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
  800f666:	46bd      	mov	sp, r7
  800f668:	bd80      	pop	{r7, pc}
  800f66a:	bf00      	nop
- 800f66c:	20002668 	.word	0x20002668
+ 800f66c:	20004a68 	.word	0x20004a68
  800f670:	40006800 	.word	0x40006800
 
 0800f674 <USBD_LL_Start>:
@@ -41760,7 +41760,7 @@ void *USBD_static_malloc(uint32_t size)
  800fb4c:	f85d 7b04 	ldr.w	r7, [sp], #4
  800fb50:	4770      	bx	lr
  800fb52:	bf00      	nop
- 800fb54:	20002948 	.word	0x20002948
+ 800fb54:	20004d48 	.word	0x20004d48
 
 0800fb58 <USBD_static_free>:
   * @brief  Dummy memory free
@@ -41948,7 +41948,7 @@ static void SystemClockConfig_Resume(void)
  800fcae:	e7ca      	b.n	800fc46 <_free_r+0x22>
  800fcb0:	bd38      	pop	{r3, r4, r5, pc}
  800fcb2:	bf00      	nop
- 800fcb4:	20002d14 	.word	0x20002d14
+ 800fcb4:	20005114 	.word	0x20005114
 
 0800fcb8 <sbrk_aligned>:
  800fcb8:	b570      	push	{r4, r5, r6, lr}
@@ -41978,7 +41978,7 @@ static void SystemClockConfig_Resume(void)
  800fcf2:	d1f2      	bne.n	800fcda <sbrk_aligned+0x22>
  800fcf4:	e7ef      	b.n	800fcd6 <sbrk_aligned+0x1e>
  800fcf6:	bf00      	nop
- 800fcf8:	20002d10 	.word	0x20002d10
+ 800fcf8:	20005110 	.word	0x20005110
 
 0800fcfc <_malloc_r>:
  800fcfc:	e92d 43f8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
@@ -42088,19 +42088,19 @@ static void SystemClockConfig_Resume(void)
  800fdf2:	6005      	str	r5, [r0, #0]
  800fdf4:	e7d6      	b.n	800fda4 <_malloc_r+0xa8>
  800fdf6:	bf00      	nop
- 800fdf8:	20002d14 	.word	0x20002d14
+ 800fdf8:	20005114 	.word	0x20005114
 
 0800fdfc <__malloc_lock>:
  800fdfc:	4801      	ldr	r0, [pc, #4]	@ (800fe04 <__malloc_lock+0x8>)
  800fdfe:	f7ff bf0f 	b.w	800fc20 <__retarget_lock_acquire_recursive>
  800fe02:	bf00      	nop
- 800fe04:	20002d0c 	.word	0x20002d0c
+ 800fe04:	2000510c 	.word	0x2000510c
 
 0800fe08 <__malloc_unlock>:
  800fe08:	4801      	ldr	r0, [pc, #4]	@ (800fe10 <__malloc_unlock+0x8>)
  800fe0a:	f7ff bf0a 	b.w	800fc22 <__retarget_lock_release_recursive>
  800fe0e:	bf00      	nop
- 800fe10:	20002d0c 	.word	0x20002d0c
+ 800fe10:	2000510c 	.word	0x2000510c
 
 0800fe14 <__ssputs_r>:
  800fe14:	e92d 47f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
@@ -42750,7 +42750,7 @@ static void SystemClockConfig_Resume(void)
  8010426:	b103      	cbz	r3, 801042a <_sbrk_r+0x1a>
  8010428:	6023      	str	r3, [r4, #0]
  801042a:	bd38      	pop	{r3, r4, r5, pc}
- 801042c:	20002d08 	.word	0x20002d08
+ 801042c:	20005108 	.word	0x20005108
 
 08010430 <memcpy>:
  8010430:	440a      	add	r2, r1
