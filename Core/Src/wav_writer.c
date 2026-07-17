@@ -117,7 +117,7 @@ bool WAV_Create(char *filename)
 bool WAV_WriteSamples(uint16_t *samples,
                       uint32_t count)
 {
-    static int16_t converted[2048];
+    static int16_t converted[512];
 
 
     for(uint32_t i=0;i<count;i++)
