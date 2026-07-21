@@ -76,7 +76,7 @@ bool WAV_Create(char *filename)
     header.num_channels = 1;
 
 
-    header.sample_rate = 16000;
+    header.sample_rate = 10000;
 
 
     header.bits_per_sample = 16;
@@ -117,19 +117,18 @@ bool WAV_Create(char *filename)
 bool WAV_WriteSamples(uint16_t *samples,
                       uint32_t count)
 {
-    static int16_t converted[512];
+    static int16_t converted[2048];
 
 
     for(uint32_t i=0;i<count;i++)
     {
-        converted[i] =
-            ((int32_t)samples[i]-2048)<<4;
+        converted[i] = ((int32_t)samples[i]-2048)<<4;
     }
 
 
     UINT written;
 
-
+    
     if(f_write(&wav_file,
                converted,
                count*2,
@@ -150,16 +149,16 @@ bool WAV_WriteSamples(uint16_t *samples,
 bool WAV_Close(void)
 {
     WAV_Header header;
-
+    
     UINT written;
 
 
     // rebuild header with correct sizes
 
     memcpy(header.riff,"RIFF",4);
-
+    
     header.file_size = 36 + wav_data_size;
-
+    
     memcpy(header.wave,"WAVE",4);
 
 
@@ -171,7 +170,7 @@ bool WAV_Close(void)
 
     header.num_channels = 1;
 
-    header.sample_rate = 16000;
+    header.sample_rate = 10000;
 
     header.bits_per_sample = 16;
 

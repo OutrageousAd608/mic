@@ -1,6 +1,7 @@
-../Core/Src/flash_disk.c:19:6:FlashDisk_Init	1
-../Core/Src/flash_disk.c:26:6:FlashDisk_Read	3
-../Core/Src/flash_disk.c:55:6:FlashDisk_Write	3
-../Core/Src/flash_disk.c:89:10:FlashDisk_GetBlockCount	1
-../Core/Src/flash_disk.c:96:10:FlashDisk_GetBlockSize	1
-../Core/Src/flash_disk.c:101:13:FlashDisk_UpdateEraseSector	4
+../Core/Src/flash_disk.c:20:6:FlashDisk_Init	1
+../Core/Src/flash_disk.c:27:6:FlashDisk_Read	3
+../Core/Src/flash_disk.c:56:6:FlashDisk_Write	3
+../Core/Src/flash_disk.c:90:10:FlashDisk_GetBlockCount	1
+../Core/Src/flash_disk.c:97:10:FlashDisk_GetBlockSize	1
+../Core/Src/flash_disk.c:102:13:FlashDisk_UpdateEraseSector	4
+../Core/Src/flash_disk.c:140:6:FlashDisk_Stream	4

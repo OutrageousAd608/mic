@@ -36,6 +36,7 @@
 #include <string.h>
 #include "ff_gen_drv.h"
 #include "flash_disk.h"
+#include "storage_manager.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -43,6 +44,8 @@
 /* Private variables ---------------------------------------------------------*/
 /* Disk status */
 static volatile DSTATUS Stat = STA_NOINIT;
+
+extern bool streaming;
 
 /* USER CODE END DECL */
 
@@ -156,16 +159,36 @@ DRESULT USER_write (
 {
   /* USER CODE BEGIN WRITE */
   /* USER CODE HERE */
-	for(uint32_t i = 0; i < count; i++)
-	    {
-	        if(!FlashDisk_Write(sector + i,
-	                            (uint8_t *)(buff + (i * FLASH_DISK_BLOCK_SIZE))))
-	        {
-	            return RES_ERROR;
-	        }
-	    }
+  /* 
+   * FAST PATH: Only stream if we are recording AND writing exactly 8 sectors (4KB) 
+   */
+  if(streaming)
+  {
+      if(FlashDisk_Stream(sector, (uint8_t *)buff))
+      {
+          return RES_OK;
+      }
+  }
+  else
+  {
+      /* 
+       * SLOW PATH: Use standard read-modify-write for header updates, FAT tables, 
+       * and any small writes where count < 8.
+       */
+      for(uint32_t i = 0; i < count; i++)
+      {
+          if(!FlashDisk_Write(sector + i, (uint8_t *)(buff + (i * FLASH_DISK_BLOCK_SIZE))))
+          {
+              return RES_ERROR;
+          }
+      }
+      
+      // Ensure we return OK if the loop completes successfully
+      return RES_OK; 
+  }
+	
 
-	    return RES_OK;
+  return RES_ERROR;
   /* USER CODE END WRITE */
 }
 #endif /* _USE_WRITE == 1 */

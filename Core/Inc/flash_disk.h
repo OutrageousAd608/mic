@@ -85,4 +85,6 @@ uint32_t FlashDisk_GetBlockCount(void);
  */
 uint32_t FlashDisk_GetBlockSize(void);
 
+bool FlashDisk_Stream(uint32_t block, uint8_t *buffer);
+
 #endif /* INC_FLASH_DISK_H_ */

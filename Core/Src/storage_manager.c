@@ -14,10 +14,11 @@
 
 static StorageState current_state;
 static uint32_t samples_written = 0;
+bool streaming = 0;
 
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim6;
-extern uint16_t audio_buffer[1024];
+extern uint16_t audio_buffer[4096];
 
 extern volatile uint8_t adc_half_ready;
 extern volatile uint8_t adc_full_ready;
@@ -70,20 +71,20 @@ void StorageManager_Task(void)
     if(adc_half_ready)
     {
         adc_half_ready = 0;
-
-        WAV_WriteSamples(&audio_buffer[0],512);
-
-        samples_written += 512;
+        streaming = 1;
+        WAV_WriteSamples(&audio_buffer[0],2048);
+        streaming = 0;
+        samples_written += 2048;
     }
 
 
     if(adc_full_ready)
     {
         adc_full_ready = 0;
-
-        WAV_WriteSamples(&audio_buffer[512],512);
-
-        samples_written += 512;
+        streaming = 1;
+        WAV_WriteSamples(&audio_buffer[2048],2048);
+        streaming = 0;
+        samples_written += 2048;
     }
 
 
@@ -136,7 +137,7 @@ void StorageManager_StartRecording(void)
 
         HAL_ADC_Start_DMA(&hadc1,
                           (uint32_t*)audio_buffer,
-                          1024);
+                          4096);
 
 
         current_state = STORAGE_RECORDING;

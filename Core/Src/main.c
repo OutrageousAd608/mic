@@ -53,7 +53,7 @@ SPI_HandleTypeDef hspi1;
 TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN PV */
-uint16_t audio_buffer[1024];
+uint16_t audio_buffer[4096];
 volatile uint8_t adc_half_ready = 0;
 volatile uint8_t adc_full_ready = 0;
 /* USER CODE END PV */
@@ -300,7 +300,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 0;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 4999;
+  htim6.Init.Period = 7999;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {

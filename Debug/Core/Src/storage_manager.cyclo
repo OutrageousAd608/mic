@@ -1,7 +1,7 @@
-../Core/Src/storage_manager.c:25:13:ButtonPressed	1
-../Core/Src/storage_manager.c:31:6:StorageManager_Init	1
-../Core/Src/storage_manager.c:38:6:StorageManager_Task	9
-../Core/Src/storage_manager.c:105:6:StorageManager_IsRecording	1
-../Core/Src/storage_manager.c:112:6:StorageManager_USBAllowed	1
-../Core/Src/storage_manager.c:119:6:StorageManager_StartRecording	3
-../Core/Src/storage_manager.c:149:6:StorageManager_StopRecording	1
+../Core/Src/storage_manager.c:26:13:ButtonPressed	1
+../Core/Src/storage_manager.c:32:6:StorageManager_Init	1
+../Core/Src/storage_manager.c:39:6:StorageManager_Task	9
+../Core/Src/storage_manager.c:106:6:StorageManager_IsRecording	1
+../Core/Src/storage_manager.c:113:6:StorageManager_USBAllowed	1
+../Core/Src/storage_manager.c:120:6:StorageManager_StartRecording	3
+../Core/Src/storage_manager.c:150:6:StorageManager_StopRecording	1
