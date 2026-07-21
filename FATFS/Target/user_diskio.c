@@ -162,7 +162,7 @@ DRESULT USER_write (
   /* 
    * FAST PATH: Only stream if we are recording AND writing exactly 8 sectors (4KB) 
    */
-  if(streaming)
+  if(streaming && count == 8)
   {
       if(FlashDisk_Stream(sector, (uint8_t *)buff))
       {
